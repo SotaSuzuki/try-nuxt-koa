@@ -1,0 +1,1 @@
+export { destroyMixin } from './destroy'
