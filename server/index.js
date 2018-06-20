@@ -1,14 +1,27 @@
 import Koa from 'koa'
 import { Nuxt, Builder } from 'nuxt'
+import passport from 'koa-passport'
+import passportSession from 'koa-session'
+
+import apiRouter from '../api'
 
 async function start () {
   const app = new Koa()
   const host = process.env.HOST || '127.0.0.1'
-  const port = process.env.PORT || 12000
+  const port = process.env.PORT || 4000
 
   // Import and Set Nuxt.js options
   let config = require('../nuxt.config.js')
   config.dev = !(app.env === 'production')
+
+  app.proxy = true
+
+  app.keys = ['your-session-secret']
+  app.use(passportSession({}, app))
+  app.use(passport.initialize())
+  app.use(passport.session())
+
+  app.use(apiRouter.routes())
 
   // Instantiate nuxt.js
   const nuxt = new Nuxt(config)
